@@ -7,7 +7,7 @@ use Module::Install::Catalyst; # Complain loudly if you don't have
                                # 'make dist' to create a standalone tarball.
 
 name 'PF2K7';
-all_from 'lib\PF2K7.pm';
+all_from 'lib/PF2K7.pm';
 
 requires 'Catalyst::Runtime' => '5.80028';
 requires 'Catalyst::Plugin::ConfigLoader';
