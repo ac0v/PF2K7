@@ -473,10 +473,10 @@ mkdir -p $data
 $Sw/bin/initdb -D $data
 $Sw/bin/pg_ctl start -l $log -D $data
 sleep 10
-$Sw/bin/createuser -P -e -s tsg
-$Sw/bin/createdb -e -O tsg tsg
+$Sw/bin/createuser -P -e -s pf
+$Sw/bin/createdb -e -O pf pf
 
-# $Sw/bin/psql tsg
+# $Sw/bin/psql pf
 
 and stop the db with:
 

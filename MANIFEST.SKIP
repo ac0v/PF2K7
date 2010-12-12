@@ -23,4 +23,4 @@ core$
 ^.git/
 ^tags$
 ^db/sql/
-^db/tsg.db$
+^db/pf*.db$

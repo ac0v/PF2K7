@@ -3,13 +3,13 @@
 use 5.12.2;
 use autodie;
 
-use TSG::Schema;
+use PF2K7::Schema;
 
 sub main
 {
     my ($db)   = @_;
-    my $dsn    = "dbi:SQLite:dbname=db/tsg.db";
-    my $schema = TSG::Schema->connect($dsn);
+    my $dsn    = "dbi:SQLite:dbname=db/pf.db";
+    my $schema = PF2K7::Schema->connect($dsn);
     $schema->create_ddl_dir
     (
         [ "MySQL", "SQLite", "PostgreSQL" ],

@@ -1,6 +1,6 @@
 #/bin/sh
 
-# TSG setup script
+# PF setup script
 # . ./setup [sw_directory]
 
 sw=${1:-/PF/sw}
