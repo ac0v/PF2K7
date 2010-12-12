@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+
+use 5.12.2;
+use autodie;
+
+use TSG::Schema;
+
+sub main
+{
+    my ($db)   = @_;
+    my $dsn    = "dbi:SQLite:dbname=db/tsg.db";
+    my $schema = TSG::Schema->connect($dsn);
+    $schema->create_ddl_dir
+    (
+        [ "MySQL", "SQLite", "PostgreSQL" ],
+        "0.1",
+        "./db/sql/"
+    );
+}
+
+main @ARGV
+
+__END__
+
+=head1 NAME
+
+make_sql - write SQL from schema
+
+=head1 SYNOPSIS
+
+ make_sql
+
+=head1 DESCRIPTION
+
+Creates SQL from s schema.
+
+=head1 AUTHOR
+
+Paul Johnson, paul@pjcj.net
+
+=head1 LICENSE
+
+Copyright 2010, Paul Johnson (paul@pjcj.net).
+
+This software is mine.  You can't have it.
+
+=cut

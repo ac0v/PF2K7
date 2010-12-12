@@ -1,0 +1,166 @@
+#!/usr/bin/perl
+
+use 5.12.2;
+use autodie;
+
+my $WORKERS = 2;
+
+sub sys
+{
+    my @cmd = @_;
+    say "@cmd";
+    system @cmd
+}
+
+sub servers
+{
+    # Proc::ProcessTable seems to be having problems building on a
+    # non-threaded perl, so lets do it the old-fashioned way.
+
+    open my $ps, "-|", "ps -elf";
+    my @s = grep /PF.*start_server.*starman/, <$ps>;
+    close $ps;
+    chomp @s;
+
+    @s
+}
+
+sub ports
+{
+    state $ports;
+    return $ports if $ports;
+
+    $ports = {};
+    for (servers)
+    {
+        $ports->{$1} = 1 if /start_server --port 127.0.0.1:(\d+) -- /;
+    }
+
+    $ports
+}
+
+sub port_in_use
+{
+    my ($port) = @_;
+    ports->{$port}
+}
+
+sub free_port
+{
+    for my $port (28080 .. 65000)
+    {
+        return $port unless port_in_use($port);
+    }
+    0
+}
+
+{
+
+my $port_file = "utils/PORT";
+
+sub write_port
+{
+    open my $fh, ">", $port_file;
+    print $fh free_port;
+    close $fh;
+}
+
+sub read_port
+{
+    open my $fh, "<", $port_file;
+    chomp (my $port = <$fh>);
+    close $fh;
+    $port
+}
+
+sub ensure_valid_port
+{
+    my $port = eval { read_port };
+    stop_server($port) if $port;
+    write_port if !$port || port_in_use($port);
+}
+
+}
+
+sub start_server
+{
+    my $command = shift;
+    my $port    = shift || read_port;
+    my $workers = shift || $WORKERS;
+    sys "start_server --port 127.0.0.1:$port -- " .
+        "starman --workers $workers " .
+        "script/pf2k7.psgi >> pf2k7.out 2>&1 &";
+    show_servers();
+}
+
+sub stop_server
+{
+    my $command = shift;
+    my $port    = shift || read_port;
+    for (servers)
+    {
+        say;
+        kill 15, $1 if /\S+\s+\S+\s+\S+\s+(\d+).+-port 127\.0\.0\.1:$port/
+    }
+    if (my @s = servers)
+    {
+        say "*** Can't stop server!";
+        say for @s;
+    }
+}
+
+sub show_servers
+{
+    say for servers;
+}
+
+sub restart_server
+{
+    stop_server;
+    { no autodie; unlink "pf2k7.out" }
+    start_server;
+}
+
+my $Command =
+{
+    start_server      => \&start_server,
+    stop_server       => \&stop_server,
+    show_servers      => \&show_servers,
+    restart_server    => \&restart_server,
+    ensure_valid_port => \&ensure_valid_port,
+};
+
+sub main
+{
+    my ($command) = @ARGV;
+    die "No such command: $command" unless $Command->{$command};
+    $Command->{$command}->(@ARGV)
+}
+
+main
+
+__END__
+
+=head1 NAME
+
+makeh - make helper routines
+
+=head1 SYNOPSIS
+
+ makeh <command>
+
+=head1 DESCRIPTION
+
+Runs various functions to save having to code them into Makefile.PL.
+
+=head1 AUTHOR
+
+Paul Johnson, paul@pjcj.net
+
+=head1 LICENSE
+
+Copyright 2010, Paul Johnson (paul@pjcj.net).
+
+This software is mine.  You can't have it.
+
+=cut

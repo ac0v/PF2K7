@@ -1,0 +1,7 @@
+#!/bin/sh
+
+DB=db/tsg.db
+rm -f $DB
+sqlite3 $DB < db/tsg.sql
+perl -MDBIx::Class::Schema::Loader=make_schema_at,dump_to_dir:./lib -e 'make_schema_at("TSG::Schema", { debug => 1 }, [ "dbi:SQLite:dbname=db/tsg.db" ])'
+perl -Ilib utils/make_sql
