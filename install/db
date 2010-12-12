@@ -1,0 +1,14 @@
+#/bin/sh
+
+# db control script
+# db start|stop|restart
+
+sw=${sw:-/PF/sw}
+op=${1:-restart}
+
+pg=$(echo $sw | perl -pe 's/sw$/pgsql/')
+data=$pg/data
+log=$pg/postgres.log
+
+# id -a
+$sw/bin/pg_ctl $op -l $log -D $data

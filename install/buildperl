@@ -1,0 +1,512 @@
+#!/usr/bin/perl
+
+# Copyright 2001-2010, Paul Johnson (paul@pjcj.net)
+
+# This software is free.  It is licensed under the same terms as Perl itself.
+
+# The latest version of this software should be available from my homepage:
+# http://www.pjcj.net
+
+use strict;
+use warnings;
+
+require 5.012;
+
+use autodie;
+use Getopt::Long;
+
+use System "sys:dsys: command, error";
+
+my @opt = qw( perl modules
+              postgres
+              zlib openssl
+              apache mod_perl fastcgi
+              git
+              coverage all );
+
+my $Usage =
+    "Usage: $0 /src/dir perl_version /installation [" . join("|", @opt) . "]\n";
+
+my $Src_dir      = shift  || die $Usage;
+my $Perl_src     = shift  || die $Usage;
+my $Installation = shift  || die $Usage;
+my $Mirror;
+
+GetOptions
+(
+    "mirror=s" => \$Mirror,
+) or die $Usage;
+
+my $Options      = "@ARGV";
+   $Options      = "dry"  if $Options =~ /\bdry\b/;
+   $Options      = "@opt" if $Options =~ /\ball\b/;
+   pop @opt for 1 .. 8;
+   $Options      = "@opt" unless $Options;
+
+my $Sw;
+my $Perl;
+
+my $Top   = `pwd`;
+chomp $Top;
+my $Build = "$Top/build";
+my $Blead = $Perl_src eq "blead";
+my $Maint = $Perl_src eq "maint";
+
+sub get_src
+{
+    my ($package, $dir) = @_;
+    $dir ||= $Src_dir;
+    my $src = $package;
+    $src = "$package.tar.gz"       unless -f $src;
+    $src = "$package.tar.bz2"      unless -f $src;
+    $src = "$dir/$package"         unless -f $src;
+    $src = "$dir/$package.tar.gz"  unless -f $src;
+    $src = "$dir/$package.tar.bz2" unless -f $src;
+    $src = $package                unless -f $src;
+    # die "Can't find $package in $dir ($Src_dir)\n"    unless -f $src;
+    return $src;
+}
+
+sub building ($)
+{
+    my ($option) = @_;
+    return $Options =~ /\b$option\b/i;
+}
+
+sub uncompress
+{
+    $_[0] =~ /2$/ ? "bzcat" : "zcat"
+}
+
+sub build ($$$)
+{
+    my ($module, $src_dir, $opts) = @_;
+
+    chdir $Build or die "Can't chdir $Build: $!";
+    my $src = get_src($module, $src_dir);
+
+    $opts =
+    {
+        "unpack" => sub { dsys uncompress($src) . " $src | tar xf -" },
+        dir      => sub { $src =~ m|.*/(.*)\.tar\.| && $1 },
+        config   => sub { dsys "$Perl Makefile.PL" },
+        make     => sub { dsys "make" },
+        test     => sub { sys  "make test" }, # some modules fail their tests...
+        install  => sub { dsys "make install" },
+        %$opts
+    };
+
+    print "build $module\n";
+    my $dir = $opts->{dir}->();
+    $opts->{"unpack"}->();
+    chdir $dir or die "Can't chdir $dir: $!";
+    $opts->{config}->();
+    $opts->{make}->();
+    $opts->{test}->();
+    $opts->{install}->();
+    print "built $module\n";
+}
+
+sub main ()
+{
+    dsys "rm -rf $Build";
+    mkdir $Build, 0750 or die "Can't mkdir $Build: $!";
+    $ENV{HOME} = $Sw;
+    my $gmake  = "make";
+
+
+    if (building "perl" && (!-e "$Sw/bin/perl" || building "force"))
+    {
+        chdir $Build or die "Can't chdir $Build: $!";
+        dsys "rm -rf $Sw/*";
+
+        if ($Blead)
+        {
+            my $perl_dir = "/usr/local/pkg/bleadperl";
+            mkdir $perl_dir;
+            chdir $perl_dir or die "Can't chdir $perl_dir: $!";
+            dsys "rsync -avz --delete " .
+                 "rsync://ftp.activestate.com/perl-current/ .";
+        }
+        elsif ($Maint)
+        {
+            my $perl_dir = "$Installation/tmp/maintperl";
+            dsys "mkdir -p $perl_dir";
+            chdir $perl_dir or die "Can't chdir $perl_dir: $!";
+            if (1)
+            {
+                dsys "rsync -avz --delete " .
+                     "rsync://ftp.linux.activestate.com/perl-5.8.x/ .";
+            }
+            else
+            {
+                my $url = "http://git.develooper.com/?p=perl.git;a=snapshot;" .
+                          "h=maint-5.10;sf=tgz";
+                my $src = "maint.tar.gz";
+                dsys "rm -f *gz";
+                dsys "wget '$url'";
+                dsys "mv *gz $src";
+                dsys uncompress($src) . " $src | tar xf -";
+                $perl_dir .= "/perl";
+                chdir $perl_dir or die "Can't chdir $perl_dir: $!";
+            }
+        }
+        else
+        {
+            dsys uncompress($Perl_src) . " $Perl_src | tar xf -";
+            my ($perl_dir) = $Perl_src =~ m!.*/(.*)\.tar\.(gz|bz2)$!;
+            chdir $perl_dir or die "Can't chdir $perl_dir: $!";
+        }
+
+        my @opts =
+        (
+          "-Dperladmin='paul\@pjcj.net'",
+          "-Dprefix=$Sw",
+        );
+        push @opts, "-Dusedevel" if $Blead;
+        push @opts,
+        (
+            # -A, not -D
+            "-Dccflags='-fprofile-arcs -ftest-coverage'",
+            "-Dldflags='-fprofile-arcs -ftest-coverage'",
+            "-Doptimize='-g -O0'",
+        ) if building "Xcoverage";
+        push @opts, "-A ccflags=-fPIC";
+
+        dsys "sh ./Configure -des @opts";
+        dsys "make" . (building "Xcoverage" ? " perl.gcov" : "");
+        dsys "HARNESS_OPTIONS=j$ENV{TEST_JOBS}:c make -j$ENV{TEST_JOBS} test_harness install";
+        # dsys "make install";
+
+        my ($version) = glob "${Perl}5.*";
+        symlink $version, $Perl unless -e $Perl;
+
+        $Options =~ s/\bperl\b//;
+    }
+
+    chdir $Top or die "Can't chdir $Top: $!";
+    my $restart = "perl -le 'print q()' '' | " .
+                  "$Perl $0 $Src_dir $Perl_src $Installation $Options";
+    print "<$restart [$^X] [$Perl]>\n";
+    exec $restart if $^X !~ /$Perl/;
+
+
+    if (building "zlib")
+    {
+        my $zlib = "zlib-1.2.5";
+        build $zlib,
+              $Src_dir,
+              {
+                  config  => sub { dsys "./configure" },
+                  install => sub { dsys "make install prefix=$Sw" },
+              };
+    }
+
+
+    if (building "openssl")
+    {
+        # my $openssl = "openssl-0.9.8g";  # Crypt::SSLeay fails
+        my $openssl = "openssl-0.9.7j";
+        # my $openssl = "openssl-0.9.8j";
+        build $openssl,
+              $Src_dir,
+              { config => sub { dsys "./config --prefix=$Sw shared" } };
+    }
+
+    $ENV{LD_PRELOAD} = "$Sw/lib/libssl.so" if -e "$Sw/lib/libssl.so";
+
+
+    # my $apache   = "apache_1.3.41";
+    my $apache   = "httpd-2.2.11";
+
+    if ($apache =~ /apache/)
+    {
+        my $mod_perl = "mod_perl-1.30";
+
+        build $apache,
+              $Src_dir,
+              {
+                  config  => sub {},
+                  make    => sub {},
+                  test    => sub {},
+                  install => sub {},
+              }
+            if building "apache";
+
+        build $mod_perl,
+              $Src_dir,
+              {
+                  config => sub
+                  {
+                      dsys "$Perl Makefile.PL" .
+                           " APACHE_SRC=../perl/src" .
+                           " DO_HTTPD=1 USE_APACI=1 PREP_HTTPD=1 EVERYTHING=1";
+                  },
+              }
+            if building "mod_perl";
+
+        build $apache,
+              $Src_dir,
+              {
+                  "unpack" => sub {},
+                  config   => sub
+                  {
+                      dsys "./configure" .
+                           " --prefix=$Sw" .
+                           " --enable-module=so" .
+                           " --enable-module=rewrite" .
+                           " --activate-module=src/modules/perl/libperl.a";
+                  },
+              }
+            if building "apache";
+    }
+    else
+    {
+        my $mod_perl = "mod_perl-2.0.4";
+
+        build $apache,
+              $Src_dir,
+              {
+                  config   => sub
+                  {
+                      dsys "./configure" .
+                           " --prefix=$Sw" .
+                           " --with-z=$Sw" .
+                           " --with-ssl=$Sw" .
+                           " --enable-mods-shared='ssl'" .
+                           " --enable-modules='dav rewrite deflate headers'";
+                  },
+              }
+            if building "apache";
+
+        build $mod_perl,
+              $Src_dir,
+              {
+                  config => sub
+                  {
+                      dsys "$Perl Makefile.PL MP_APXS=$Sw/bin/apxs";
+                  },
+              }
+            if building "mod_perl";
+    }
+
+
+    if (building "fastcgi" && -e "$Sw/bin/httpd")
+    {
+        my $fastcgi  = "mod_fastcgi-2.4.6";
+
+        build $fastcgi,
+              $Src_dir,
+              {
+                  config => sub
+                  {
+                      dsys "cp Makefile.AP2 Makefile";
+                      {
+                          local ($^I, @ARGV) = (".bak", "Makefile");
+                          while (<>)
+                          {
+                              s|/usr/local/apache2|$Sw|;
+                              print;
+                          }
+                      }
+                  },
+                  test    => sub {},
+              }
+      }
+
+
+    if (building "git")
+    {
+        my $git = "git-1.6.3.3";
+
+        build $git,
+              $Src_dir,
+              {
+                  config  => sub { dsys "./configure --prefix=$Sw" },
+                  make    => sub { dsys "$gmake all" },
+                  test    => sub { dsys "$gmake test" },
+                  test    => sub { dsys "echo $gmake test" },
+                  install => sub { dsys "$gmake install" },
+              }
+    }
+
+
+    if (building "postgres")
+    {
+        my $postgres = "postgresql-8.4.4";
+        build $postgres,
+              $Src_dir,
+              {
+                  config => sub
+                  {
+                      dsys "./configure" .
+                           " --prefix=$Sw" .
+                           " --with-pgport=5433" .
+                           " --without-readline" .
+                           " --without-zlib" .
+                           " --with-perl";
+                  },
+                  make    => sub { dsys "$gmake"               },
+                  test    => sub { dsys "$gmake check"         },
+                  install => sub { dsys "$gmake install-strip" },
+              }
+        unless -e "$Sw/bin/pg_ctl" && !building "force";
+    }
+
+
+    if (building "modules")
+    {
+        my @modules =
+        qw(
+            DBIx::Class::InflateColumn::DateTime
+            Template
+            DBD::Pg
+            DBIx::Class::Schema::Loader::DBI::Pg
+            DBD::SQLite
+            DBIx::Class::Schema::Loader::DBI::SQLite
+            SQL::Translator
+
+            Catalyst
+            Catalyst::Devel
+            Catalyst::Engine::PSGI
+            Catalyst::Model::DBIC::Schema
+            Catalyst::Plugin::Authentication
+            Catalyst::Plugin::Authorization::Roles
+            Catalyst::Plugin::ConfigLoader
+            Catalyst::Plugin::Session::State::Cookie
+            Catalyst::Plugin::Session::Store::FastMmap
+            Catalyst::Plugin::StackTrace
+            Catalyst::Plugin::Static::Simple
+            Catalyst::Plugin::Unicode
+            Catalyst::View::JSON
+            Catalyst::View::TT
+            Catalyst::Test
+
+            MooseX::Declare
+
+            Starman
+            Net::Server::SS::PreFork
+            Server::Starter
+
+            Plack::Middleware::Debug
+
+            CPAN::DistnameInfo
+            Gitalist
+
+            Test::Pod::Coverage
+
+            Devel::Cover
+          );
+
+        my $cpanm  = my $cpann = "$Sw/bin/cpanm";
+        my $cpanf  = "$cpanm -v --force";
+        my $cpanom = "";
+
+        if ($Mirror)
+        {
+            my $m   = " --mirror $Mirror";
+            $m     .= " --mirror-only" unless $m =~ m|tp://|;
+            $cpann .= $m;
+            $cpanf .= $m;
+            $cpanom = "--mirror " . ($m =~ m|tp://| ? "" : "file://") . $Mirror;
+        }
+        else
+        {
+            $cpanf  .= " --mirror http://cpan.wanadoo.nl/ --mirror-only";
+        }
+
+        dsys((-e $cpanm ? $cpann : "wget --no-check-certificate -O -" .
+                                   " http://cpanmin.us | $Perl -") .
+             " --self-upgrade\n");
+        for my $mod (@modules)
+        {
+            dsys "$cpanf $mod\n" if sys "$cpann $mod\n";
+        }
+
+        my $cpano = "$Sw/bin/cpan-outdated";
+        dsys "wget --no-check-certificate -O $cpano http://xrl.us/cpanoutdated"
+            unless -e $cpano;
+        chmod 0755, $cpano;
+
+        dsys "$Perl $cpano $cpanom | xargs $cpanf"
+            if sys "$Perl $cpano $cpanom | xargs $cpann";
+    }
+
+
+    if (building "coverage")
+    {
+        my $dir = "$Sw/.cpan/build";
+        for my $d (grep -d, <$dir/*>)
+        {
+            if ((my $n = $d) =~ s/-\w{6}$//)
+            {
+                print "Renaming $d => $n\n";
+                rename $d => $n;
+            }
+        }
+
+        my $c;
+        $c .= "/usr/local/pkg/base/sw/bin/perl $Sw/bin/" if $Blead;
+        $c .= "cpancover -directory $dir -outputdir $Sw/cpancover ";
+        $c .= "-outputfile index.html -report ";
+        $c .= $Blead ? "html" : "html_basic";
+        # $c .= " -force";
+        $c .= " -redo_html";
+        dsys $c;
+    }
+
+
+    if (building "postgres" || building "dry")
+    {
+        my $pg   = "$Installation/pgsql";
+        my $data = "$pg/data";
+        my $log  = "$pg/postgres.log";
+        my $user  = getpwuid($<);
+        print <<"EOT";
+
+Now run the following commands as root:
+
+rm -rf $pg
+mkdir -p $data
+# chown -R postgres.postgres $pg
+# su - postgres
+$Sw/bin/initdb -D $data
+$Sw/bin/pg_ctl start -l $log -D $data
+sleep 10
+$Sw/bin/createuser -P -e -s tsg
+$Sw/bin/createdb -e -O tsg tsg
+
+# $Sw/bin/psql tsg
+
+and stop the db with:
+
+$Sw/bin/pg_ctl stop -l $log -D $data
+
+EOT
+    }
+}
+
+$Perl_src = get_src($Perl_src, $Src_dir);
+
+$Sw                     = "$Installation/sw";
+$Perl                   = "$Sw/bin/perl";
+$ENV{PATH}              = "$Sw/bin:$ENV{PATH}";
+$ENV{LD_LIBRARY_PATH}   = "$Sw/lib:$ENV{LD_LIBRARY_PATH}";
+$ENV{AUTOMATED_TESTING} = 1;
+$ENV{TEST_JOBS}         = 7;
+$ENV{HARNESS_OPTIONS}   = "j7:c";
+$ENV{HARNESS_TIMER}     = 1;
+
+print "sw directory    is $Sw\n";
+print "perl            is $Perl\n";
+print "PATH            is $ENV{PATH}\n";
+print "LD_LIBRARY_PATH is $ENV{LD_LIBRARY_PATH}\n";
+
+# $Perl = <${Perl}5*> unless -e $Perl;
+# die "Can't find perl under $Sw" unless -e $Perl;
+
+main
+
+__END__
+
+$ perl ./buildperl ~/g/perl/src perl-5.12.2 /PF perl modules postgres
