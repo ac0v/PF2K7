@@ -10,4 +10,4 @@ srm ()  { echo -n $1 | perl -naF: -e 'print join ":", grep !/PF/, @F' }
 
 export PATH=$(tidy $sw/bin:$(srm $PATH))
 export LD_LIBRARY_PATH=$(tidy $sw/lib:$(srm $LD_LIBRARY_PATH))
-# perl utils/makeh ensure_valid_port
+perl utils/makeh ensure_valid_port
