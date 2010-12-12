@@ -10,6 +10,33 @@ BEGIN { extends 'Catalyst::Controller' }
 #
 __PACKAGE__->config(namespace => '');
 
+sub index :Path :Args(0)
+{
+    my ($self, $c) = @_;
+    $c->response->body("Go away!");
+}
+
+sub default :Path {
+    my ( $self, $c ) = @_;
+    $c->response->body("Page not found");
+    $c->response->status(404);
+}
+
+sub end : ActionClass('RenderView') {}
+
+sub json : Local
+{
+    my ($self, $c) = @_;
+    $c->forward("index");
+    $c->stash->{current_view} = "JSON";
+}
+
+__PACKAGE__->meta->make_immutable;
+
+1;
+
+__END__
+
 =head1 NAME
 
 PF2K7::Controller::Root - Root Controller for PF2K7
@@ -22,48 +49,28 @@ PF2K7::Controller::Root - Root Controller for PF2K7
 
 =head2 index
 
-The root page (/)
-
-=cut
-
-sub index :Path :Args(0) {
-    my ( $self, $c ) = @_;
-
-    # Hello World
-    $c->response->body( $c->welcome_message );
-}
-
-=head2 default
-
-Standard 404 error page
-
-=cut
-
-sub default :Path {
-    my ( $self, $c ) = @_;
-    $c->response->body( 'Page not found' );
-    $c->response->status(404);
-}
+The root page (/).
 
 =head2 end
 
 Attempt to render a view, if needed.
 
-=cut
+=head2 default
 
-sub end : ActionClass('RenderView') {}
+Standard 404 error page.
+
+=head2 json
+
+JSON output.
 
 =head1 AUTHOR
 
-Catalyst developer
+Paul Johnson, paul@pjcj.net
 
 =head1 LICENSE
 
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
+Copyright 2010, Paul Johnson (paul@pjcj.net).
+
+This software is free.  It is licensed under the same terms as Perl itself.
 
 =cut
-
-__PACKAGE__->meta->make_immutable;
-
-1;
