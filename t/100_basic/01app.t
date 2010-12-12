@@ -1,9 +1,9 @@
-#!C:\strawberry\perl\bin\perl.exe
+#!/usr/bin/env perl
 use strict;
 use warnings;
 use Test::More;
 
-BEGIN { use_ok 'Catalyst::Test', 'PF2K7' }
+BEGIN { use_ok 'Catalyst::Test', 'TSG' }
 
 ok( request('/')->is_success, 'Request should succeed' );
 

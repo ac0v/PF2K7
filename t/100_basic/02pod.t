@@ -1,4 +1,4 @@
-#!C:\strawberry\perl\bin\perl.exe
+#!/usr/bin/env perl
 use strict;
 use warnings;
 use Test::More;
