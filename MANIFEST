@@ -1,11 +1,17 @@
 .gitignore
 Changes
+db/pf.sql
 install/buildperl
 install/db
 install/SETUP
 install/System.pm
 lib/PF2K7.pm
 lib/PF2K7/Controller/Root.pm
+lib/PF2K7/Schema.pm
+lib/PF2K7/Schema/Result/Idea.pm
+lib/PF2K7/Schema/Result/Role.pm
+lib/PF2K7/Schema/Result/User.pm
+lib/PF2K7/Schema/Result/UsersToRole.pm
 lib/PF2K7/View/JSON.pm
 lib/PF2K7/View/TT.pm
 Makefile.PL
