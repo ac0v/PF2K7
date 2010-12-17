@@ -94,6 +94,8 @@ __PACKAGE__->has_many(
 # Created by DBIx::Class::Schema::Loader v0.07002 @ 2010-12-17 21:39:06
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:nfCjd8Iuiy/o7By5lCDOxQ
 
-
 # You can replace this text with custom content, and it will be preserved on regeneration
+
+__PACKAGE__->many_to_many( roles => 'users_to_roles', 'role');
+
 1;
