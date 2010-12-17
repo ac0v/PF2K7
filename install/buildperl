@@ -382,6 +382,7 @@ sub main ()
             Catalyst::View::JSON
             Catalyst::View::TT
             Catalyst::Test
+            Catalyst::ScriptRunner
 
             MooseX::Declare
 

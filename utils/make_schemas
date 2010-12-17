@@ -3,5 +3,5 @@
 DB=db/pf.db
 rm -f $DB
 sqlite3 $DB < db/pf.sql
-perl -MDBIx::Class::Schema::Loader=make_schema_at,dump_to_dir:./lib -e 'make_schema_at("PF2K7::Schema", { debug => 1 }, [ "dbi:SQLite:dbname=db/pf.db" ])'
+perl script/pf2k7_create.pl model PF2K7 DBIC::Schema PF2K7::Schema create=static dbi:SQLite:db/pf.db
 perl -Ilib utils/make_sql
