@@ -16,6 +16,12 @@ use Catalyst qw/
     -Debug
     ConfigLoader
     Static::Simple
+
+    Authentication
+    Authorization::Roles
+    Session
+    Session::State::Cookie
+    Session::Store::FastMmap
 /;
 
 extends 'Catalyst';
@@ -34,6 +40,13 @@ $VERSION = eval $VERSION;
 
 __PACKAGE__->config(
     name => 'PF2K7',
+    'Plugin::Authentication' => {
+        default => {
+            class => 'SimpleDB',
+            user_model => 'SneakyCat::Users'
+        }
+    },
+
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
 );
