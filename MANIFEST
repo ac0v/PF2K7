@@ -7,6 +7,7 @@ install/SETUP
 install/System.pm
 lib/PF2K7.pm
 lib/PF2K7/Controller/Root.pm
+lib/PF2K7/Model/PF2K7.pm
 lib/PF2K7/Schema.pm
 lib/PF2K7/Schema/Result/Idea.pm
 lib/PF2K7/Schema/Result/Role.pm
@@ -42,6 +43,7 @@ t/100_basic/02pod.t
 t/100_basic/03podcoverage.t
 t/100_basic/10view_TT.t
 t/100_basic/20view_JSON.t
+t/100_basic/30model_PF2K7.t
 utils/make_schemas
 utils/make_sql
 utils/makeh

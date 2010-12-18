@@ -24,3 +24,4 @@ core$
 ^tags$
 ^db/sql/
 ^db/pf*.db$
+^inc/
