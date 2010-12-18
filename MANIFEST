@@ -51,6 +51,7 @@ t/100_basic/20view_JSON.t
 t/100_basic/30model_PF2K7.t
 t/100_basic/40controller_People.t
 t/100_basic/40controller_PF.t
+utils/create_db
 utils/make_schemas
 utils/make_sql
 utils/makeh

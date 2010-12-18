@@ -1,13 +1,25 @@
-Build perl, apache, mod_perl and the required modules:
+Build perl, postgres and the required modules:
 
-    Download perl, apache and mod_perl into /src/dir
+    Download perl, zlib and postgres into ~/src
+    The files can be found in http://pjcj.sytes.net/src
+
     Build everything:
 
         $ cd install
-        $ perl ./buildperl ~/g/perl/src perl-5.12.2 /PF perl modules postgres
+        # mkdir /PF
+        # chown --reference=. /PF
+        $ perl ./buildperl ~/src perl-5.12.2 /PF perl modules postgres
 
-    Change the perl executable, the location of the src directory, the perl
-    version and the directory in which to install the software to the location
-    of your perl binary (at least 5.12.1), your downloaded source tarballs,
-    the version of perl you will be installing and the location to which the
-    packages will be installed respectively.
+    If necessary, change the perl executable, the location of the src
+    directory, the perl version and the directory in which to install the
+    software to the location of your perl binary (at least 5.12.1), your
+    downloaded source tarballs, the version of perl you will be installing and
+    the location to which the packages will be installed respectively.
+
+Set up your environment:
+
+    $ . ./setup
+
+Create the initial database:
+
+    $ utils/create_db

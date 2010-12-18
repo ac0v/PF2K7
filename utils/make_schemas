@@ -1,7 +1,4 @@
 #!/bin/sh
 
-DB=db/pf.db
-rm -f $DB
-sqlite3 $DB < db/pf.sql
 perl script/pf2k7_create.pl model PF2K7 DBIC::Schema PF2K7::Schema create=static dbi:SQLite:db/pf.db
 perl -Ilib utils/make_sql

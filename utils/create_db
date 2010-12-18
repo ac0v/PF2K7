@@ -1,0 +1,5 @@
+#!/bin/sh
+
+DB=db/pf.db
+rm -f $DB
+sqlite3 $DB < db/pf.sql
