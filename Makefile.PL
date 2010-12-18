@@ -5,6 +5,30 @@ use warnings;
 
 require 5.012_002;
 
+# use inc::Module::Install;
+# use Module::Install::Catalyst;
+
+# name 'PF2K7';
+# all_from 'lib/PF2K7.pm';
+
+# requires 'Catalyst::Runtime' => '5.80028';
+# requires 'Catalyst::Plugin::ConfigLoader';
+# requires 'Catalyst::Plugin::Static::Simple';
+# requires 'Catalyst::Action::RenderView';
+# requires 'Catalyst::Engine::PSGI';
+# requires 'Moose';
+# requires 'namespace::autoclean';
+# requires 'Config::General';
+
+# test_requires 'Test::More' => '0.88';
+# catalyst;
+
+# install_script glob('script/*.pl');
+# auto_install;
+# WriteAll;
+
+# __END__
+
 use ExtUtils::MakeMaker;
 use ExtUtils::Manifest "maniread";
 
@@ -45,21 +69,6 @@ sub MY::libscan
     $_[1] =~/^blib/ && $_[1] !~ /\.pm$/ ? undef : $_
 }
 
-sub MY::test
-{
-    qq[
-TEST_VERBOSE            = 0
-TEST_FILES              = t/*/*.t
-export HARNESS_OPTIONS := j4:c
-export HARNESS_TIMER   := 1
-export TEST_POD        := 1
-export CATALYST_DEBUG  := 0
-
-test :: pure_all restart_server
-\t PERL_DL_NONLAZY=1 \$(FULLPERLRUN) "-MExtUtils::Command::MM" "-e" "test_harness(\$(TEST_VERBOSE), '\$(INST_LIB)', '\$(INST_ARCHLIB)')" \$(TEST_FILES)
-    ]
-}
-
 sub MY::postamble
 {
     qq[
@@ -81,16 +90,22 @@ show_servers :
 restart_server :
 \t \$(PERL) utils/makeh restart_server
 
-export CATALYST_SERVER := http://127.0.0.1:\$(shell cat utils/PORT)/
+export HARNESS_OPTIONS := j4:c
+export HARNESS_TIMER   := 1
+export TEST_POD        := 0
+export CATALYST_DEBUG  := 0
 
 tv :
-\t \$(MAKE) test TEST_VERBOSE=1 HARNESS_OPTIONS=j1:c
+\t \$(MAKE) test TEST_VERBOSE=1 HARNESS_OPTIONS=j1:c CATALYST_DEBUG=1
 
 td :
 \t \$(MAKE) test PF_DB_TEST=1
 
 tvd :
-\t \$(MAKE) test TEST_VERBOSE=1 PF_DB_TEST=1
+\t \$(MAKE) test TEST_VERBOSE=1 PF_DB_TEST=1 HARNESS_OPTIONS=j1:c CATALYST_DEBUG=1
+
+stest :: pure_all restart_server
+\t CATALYST_SERVER=http://127.0.0.1:\$(shell cat utils/PORT)/ PERL_DL_NONLAZY=1 \$(FULLPERLRUN) "-MExtUtils::Command::MM" "-e" "test_harness(\$(TEST_VERBOSE), '\$(INST_LIB)', '\$(INST_ARCHLIB)')" \$(TEST_FILES)
 
 cover : pure_all
 \t PF_COVER=1 HARNESS_OPTIONS=j4:c cover -test -report html_basic
