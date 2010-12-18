@@ -24,9 +24,9 @@ use Catalyst qw/
     Session::Store::FastMmap
 /;
 
-extends 'Catalyst';
+extends "Catalyst";
 
-our $VERSION = '0.01';
+our $VERSION = "0.01";
 $VERSION = eval $VERSION;
 
 # Configure the application.
@@ -38,12 +38,31 @@ $VERSION = eval $VERSION;
 # with an external configuration file acting as an override for
 # local deployment.
 
-__PACKAGE__->config(
-    name => 'PF2K7',
-    'Plugin::Authentication' => {
-        default => {
-            class => 'SimpleDB',
-            user_model => 'SneakyCat::Users'
+__PACKAGE__->config
+(
+    name         => "PF2K7",
+    default_view => "TT",
+
+    "View::TT" =>
+    {
+        INCLUDE_PATH =>
+        [
+            __PACKAGE__->path_to("root", "src"),
+            __PACKAGE__->path_to("root", "lib")
+        ],
+        TEMPLATE_EXTENSION => ".tt",
+        CATALYST_VAR       => "c",
+        TIMER              => 0,
+        PRE_PROCESS        => "config/main",
+        WRAPPER            => "site/wrapper"
+    },
+
+    "Plugin::Authentication" =>
+    {
+        default =>
+        {
+            class      => "SimpleDB",
+            user_model => "PF::Users"
         }
     },
 

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>PF</title>
+    <link rel="stylesheet" href="/static/css/pf.css" type="text/css" media="screen" title="no title" charset="utf-8">
+</head>
+<body id="PFBody">
+<div id="header">
+<h1>PF</h1><img id='powered' src="/static/images/btn_88x31_built.png"/>
+    <div id="navbar">
+        <a href="[% c.uri_for('/ideas/share') %]">Home</a> 
+        [% IF c.user_exists() %] 
+            [% IF c.check_user_roles( 'can_whisper' ) %]
+                <a href="[% c.uri_for('/ideas/whisper') %]">Tell</a>
+            [% END %]
+            <a href="[% c.uri_for('/people/logout') %]">Logout</a>
+        [% ELSE %]
+            <a href="[% c.uri_for('/people/login') %]">Login</a>
+        [% END %]
+    </div>
+</div>
+    <div id="contentarea">
+    [% IF message %]
+    <div class="messageblock">[% message %]</div>
+    [% END %]
+    [% content %]
+    </div>
+</body>

@@ -64,10 +64,7 @@ WriteMakefile
     test     => { TESTS    => "t/*/*.t"           },
 );
 
-sub MY::libscan
-{
-    $_[1] =~/^blib/ && $_[1] !~ /\.pm$/ ? undef : $_
-}
+sub MY::libscan { $_[1] =~/^blib/ && $_[1] !~ /\.pm$/ ? undef : $_ }
 
 sub MY::postamble
 {
