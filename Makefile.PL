@@ -78,6 +78,9 @@ tags : @Files
 mani :
 \t rm MANIFEST; \$(MAKE) manifest
 
+dev_server : pure_all
+\t CATALYST_DEBUG=1 \$(PERL) script/pf2k7_server.pl -f
+
 start_server :
 \t \$(PERL) utils/makeh start_server
 
