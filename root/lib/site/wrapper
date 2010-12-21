@@ -8,7 +8,8 @@
 </head>
 <body id="PFBody">
 <div id="header">
-<h1>PF</h1><img id='powered' src="/static/images/btn_88x31_built.png"/>
+    <h1>PF</h1>
+    <!-- <img id='powered' src="/static/images/btn_88x31_built.png"/> -->
     <div id="navbar">
         <a href="[% c.uri_for('/ideas/share') %]">Home</a> 
         [% IF c.user_exists() %] 
