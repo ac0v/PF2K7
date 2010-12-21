@@ -79,7 +79,7 @@ mani :
 \t rm MANIFEST; \$(MAKE) manifest
 
 dev_server : pure_all
-\t CATALYST_DEBUG=1 \$(PERL) script/pf2k7_server.pl -f
+\t \$(PERL) script/pf2k7_server.pl -d -f
 
 start_server :
 \t \$(PERL) utils/makeh start_server
@@ -96,7 +96,6 @@ restart_server :
 export HARNESS_OPTIONS := j4:c
 export HARNESS_TIMER   := 1
 export TEST_POD        := 0
-export CATALYST_DEBUG  := 0
 
 tv :
 \t \$(MAKE) test TEST_VERBOSE=1 HARNESS_OPTIONS=j1:c CATALYST_DEBUG=1
