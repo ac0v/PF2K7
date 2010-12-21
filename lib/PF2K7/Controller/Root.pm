@@ -1,13 +1,13 @@
 package PF2K7::Controller::Root;
+
 use Moose;
 use namespace::autoclean;
 
 BEGIN { extends "Catalyst::Controller" }
 
-#
 # Sets the actions in this controller to be registered with no prefix
-# so they function identically to actions created in MyApp.pm
-#
+# so they function identically to actions created in PF2K7.pm
+
 __PACKAGE__->config(namespace => "");
 
 sub index :Path :Args(0)
@@ -22,9 +22,9 @@ sub default :Path {
     $c->response->status(404);
 }
 
-sub end : ActionClass('RenderView') {}
+sub end :ActionClass("RenderView") {}
 
-sub json : Local
+sub json :Local
 {
     my ($self, $c) = @_;
     $c->forward("index");
@@ -43,7 +43,7 @@ PF2K7::Controller::Root - Root Controller for PF2K7
 
 =head1 DESCRIPTION
 
-[enter your description here]
+Root controller.
 
 =head1 METHODS
 
