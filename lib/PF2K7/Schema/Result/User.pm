@@ -26,12 +26,54 @@ __PACKAGE__->table("users");
   is_auto_increment: 1
   is_nullable: 0
 
+=head2 email
+
+  data_type: 'char'
+  default_value: (empty string)
+  is_nullable: 0
+  size: 64
+
+=head2 name
+
+  data_type: 'char'
+  default_value: (empty string)
+  is_nullable: 0
+  size: 64
+
+=head2 town
+
+  data_type: 'char'
+  default_value: (empty string)
+  is_nullable: 0
+  size: 64
+
+=head2 country
+
+  data_type: 'char'
+  default_value: (empty string)
+  is_nullable: 0
+  size: 64
+
+=head2 motto1
+
+  data_type: 'char'
+  default_value: (empty string)
+  is_nullable: 0
+  size: 256
+
+=head2 motto2
+
+  data_type: 'char'
+  default_value: (empty string)
+  is_nullable: 0
+  size: 256
+
 =head2 username
 
   data_type: 'char'
   default_value: (empty string)
   is_nullable: 0
-  size: 32
+  size: 64
 
 =head2 password
 
@@ -39,37 +81,54 @@ __PACKAGE__->table("users");
   is_nullable: 0
   size: 64
 
-=head2 status
+=head2 gps
 
   data_type: 'char'
-  default_value: 'active'
+  default_value: (empty string)
   is_nullable: 0
   size: 16
 
-=head2 last_whisper
+=head2 enneagram1
 
-  data_type: 'char'
-  is_nullable: 1
-  size: 20
+  data_type: 'int'
+  default_value: 0
+  is_nullable: 0
+  size: 8
+
+=head2 enneagram2
+
+  data_type: 'int'
+  default_value: 0
+  is_nullable: 0
+  size: 8
 
 =cut
 
 __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
+  "email",
+  { data_type => "char", default_value => "", is_nullable => 0, size => 64 },
+  "name",
+  { data_type => "char", default_value => "", is_nullable => 0, size => 64 },
+  "town",
+  { data_type => "char", default_value => "", is_nullable => 0, size => 64 },
+  "country",
+  { data_type => "char", default_value => "", is_nullable => 0, size => 64 },
+  "motto1",
+  { data_type => "char", default_value => "", is_nullable => 0, size => 256 },
+  "motto2",
+  { data_type => "char", default_value => "", is_nullable => 0, size => 256 },
   "username",
-  { data_type => "char", default_value => "", is_nullable => 0, size => 32 },
+  { data_type => "char", default_value => "", is_nullable => 0, size => 64 },
   "password",
   { data_type => "char", is_nullable => 0, size => 64 },
-  "status",
-  {
-    data_type => "char",
-    default_value => "active",
-    is_nullable => 0,
-    size => 16,
-  },
-  "last_whisper",
-  { data_type => "char", is_nullable => 1, size => 20 },
+  "gps",
+  { data_type => "char", default_value => "", is_nullable => 0, size => 16 },
+  "enneagram1",
+  { data_type => "int", default_value => 0, is_nullable => 0, size => 8 },
+  "enneagram2",
+  { data_type => "int", default_value => 0, is_nullable => 0, size => 8 },
 );
 __PACKAGE__->set_primary_key("id");
 
@@ -91,11 +150,11 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2010-12-17 21:39:06
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:nfCjd8Iuiy/o7By5lCDOxQ
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2010-12-21 18:02:10
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:aSd0MHVBtqTzPSiylUrAzw
 
 # You can replace this text with custom content, and it will be preserved on regeneration
 
-__PACKAGE__->many_to_many( roles => 'users_to_roles', 'role');
+__PACKAGE__->many_to_many( roles => "users_to_roles", "role");
 
 1;
