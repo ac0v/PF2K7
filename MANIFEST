@@ -27,6 +27,7 @@ root/favicon.ico
 root/lib/config/main
 root/lib/site/wrapper
 root/src/people/login.tt
+root/src/people/register.tt
 root/src/pf/home.tt
 root/static/images/btn_120x50_built.png
 root/static/images/btn_120x50_built_shadow.png

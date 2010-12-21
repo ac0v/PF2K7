@@ -26,6 +26,20 @@ sub login :Local :Args(0)
     );
 }
 
+sub register :Local :Args(0)
+{
+    my ($self, $c) = @_;
+
+    my $name = $c->req->params->{name};
+
+    $c->log->debug("name is [$name]");
+
+    $c->stash
+    (
+        name => $name,
+    );
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;
