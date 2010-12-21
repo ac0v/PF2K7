@@ -1,30 +1,14 @@
 package PF2K7::Controller::PF;
+
 use Moose;
 use namespace::autoclean;
 
-BEGIN {extends 'Catalyst::Controller'; }
-
-=head1 NAME
-
-PF2K7::Controller::PF - Catalyst Controller
-
-=head1 DESCRIPTION
-
-Catalyst Controller.
-
-=head1 METHODS
-
-=cut
-
-
-=head2 index
-
-=cut
+BEGIN { extends "Catalyst::Controller" }
 
 sub index :Path :Args(0)
 {
     my ($self, $c) = @_;
-    $c->response->body('Matched PF2K7::Controller::PF in PF.');
+    $c->response->body("Matched PF2K7::Controller::PF in PF.");
 }
 
 sub home :Local :Args(0)
@@ -32,18 +16,30 @@ sub home :Local :Args(0)
     my ($self, $c) = @_;
 }
 
-
-=head1 AUTHOR
-
-Paul Johnson,,,
-
-=head1 LICENSE
-
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
-
-=cut
-
 __PACKAGE__->meta->make_immutable;
 
 1;
+
+__END__
+
+=head1 NAME
+
+PF2K7::Controller::PF - PF Controller for PF2K7
+
+=head1 DESCRIPTION
+
+Main PF controller
+
+=head1 METHODS
+
+=head1 AUTHOR
+
+Paul Johnson, paul@pjcj.net
+
+=head1 LICENSE
+
+Copyright 2010, Paul Johnson (paul@pjcj.net).
+
+This software is free.  It is licensed under the same terms as Perl itself.
+
+=cut
