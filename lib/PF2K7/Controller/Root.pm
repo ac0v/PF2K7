@@ -16,6 +16,18 @@ sub index :Path :Args(0)
     $c->go("/pf/home");
 }
 
+sub login :Local
+{
+    my ($self, $c) = @_;
+    $c->go("/people/login");
+}
+
+sub register :Local
+{
+    my ($self, $c) = @_;
+    $c->go("/people/register");
+}
+
 sub default :Path {
     my ($self, $c) = @_;
     $c->response->body("Page not found");
