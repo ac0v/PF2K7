@@ -1,4 +1,6 @@
 #!/bin/sh
 
-perl script/pf2k7_create.pl model PF2K7 DBIC::Schema PF2K7::Schema create=static dbi:SQLite:db/pf.db
+perl script/pf2k7_create.pl model PF2K7 DBIC::Schema PF2K7::Schema \
+     create=static dbi:SQLite:db/pf.db \
+     on_connect_do="PRAGMA foreign_keys = ON"
 perl -Ilib utils/make_sql

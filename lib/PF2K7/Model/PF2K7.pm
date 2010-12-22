@@ -10,6 +10,7 @@ __PACKAGE__->config(
         dsn => 'dbi:SQLite:db/pf.db',
         user => '',
         password => '',
+        on_connect_do => q{PRAGMA foreign_keys = ON},
     }
 );
 
