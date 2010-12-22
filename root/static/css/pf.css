@@ -1,0 +1,77 @@
+    body {
+        margin: 0px;
+        padding: 0px;
+        font-family: arial;
+    }
+    #header {
+        background-color: #990000; 
+        color: #ffffff;
+        margin: 0px;
+        padding: 1px;
+        border-bottom: 3px solid red;
+        height: 100px; 
+        width: 99%; 
+    }
+    #header h1 {
+        padding: 5px;
+    }
+    #navbar {
+        position: absolute;
+        background-color: #660000;
+        border-top: 1px solid white; 
+        top: 74px;
+        height: 24px; 
+        width: 99%;
+    }
+    #navbar a {
+        color: white;
+        padding-left: 10px;
+        padding-right: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 16px;
+    }
+    #navbar a:hover {
+        background-color: #330000;
+    }
+    #powered {
+        position: absolute;
+        top: 20px;
+        left: 600px;
+    }
+    #contentarea {
+        background-color: #ffffff;
+        color: black;
+        padding: 5px;
+        padding-top: 20px;
+    }
+    label {
+        padding: 5px;
+    }
+    input {
+        margin: 5px;
+        border: 1px solid black;
+    }
+    .messageblock {
+        background-color: #dddddd;
+        margin: 20px;
+        padding: 10px;
+        border: 1px solid #009900;
+        width: 500px;
+        font-size: 1.2em;
+    }
+    .thought {
+        margin: 10px;
+        margin-bottom: 20px;
+        width: 500px;
+        font-size: 24px;
+    }
+    .secret_yes {
+        font-style: italic;
+    }
+    .when {
+        position: relative;
+        color: #999999;
+        left: 120px;
+        font-size: 10px;
+    }
