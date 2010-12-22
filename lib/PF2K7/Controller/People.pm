@@ -30,14 +30,17 @@ sub register :Local :Args(0)
 {
     my ($self, $c) = @_;
 
-    my $name = $c->req->params->{name};
-
-    $c->log->debug("name is [$name]");
-
-    $c->stash
-    (
-        name => $name,
-    );
+    if (lc $c->req->method eq "post")
+    {
+        my $params   = $c->req->params;
+        my $users_rs = $c->model("PF2K7::User");
+        my $newuser  = $users_rs->create
+        ({
+            username => $params->{username},
+            email    => $params->{email},
+            password => $params->{password},
+        });
+    }
 }
 
 __PACKAGE__->meta->make_immutable;
