@@ -20,29 +20,30 @@ sub login :Local :Args(0)
     {
         my $params = $c->req->params;
 
-        $c->log->debug("[$params->{username}] [$params->{password}]");
-        # If the username and password values were found in form
         if ($params->{username} && $params->{password})
         {
-            # Attempt to log the user in
-            $c->log->debug("logging in");
             if ($c->authenticate({ username => $params->{username},
                                    password => $params->{password} }))
             {
-                # If successful, then let them use the application
                 # $c->response->redirect($c->uri_for(
                     # $c->controller('Books')->action_for('list')));
-                $c->log->debug("logged in");
                 $c->stash(message => "Welcome.");
                 return;
             }
-            $c->log->debug("login failed");
             $c->stash(message => "Login failed.");
             return;
         }
-        # Set an error message
+
         $c->stash(message => "Empty username or password.");
     }
+}
+
+sub logout :Local :Args(0)
+{
+    my ($self, $c) = @_;
+
+    $c->logout;
+    $c->response->redirect($c->uri_for('/'));
 }
 
 sub register :Local :Args(0)

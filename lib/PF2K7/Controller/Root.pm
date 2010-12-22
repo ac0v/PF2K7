@@ -22,6 +22,12 @@ sub login :Local
     $c->go("/people/login");
 }
 
+sub logout :Local
+{
+    my ($self, $c) = @_;
+    $c->go("/people/logout");
+}
+
 sub register :Local
 {
     my ($self, $c) = @_;
