@@ -8,7 +8,7 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
-__PACKAGE__->load_components("InflateColumn::DateTime");
+__PACKAGE__->load_components("InflateColumn::DateTime", "TimeStamp", "EncodedColumn");
 
 =head1 NAME
 
@@ -150,11 +150,24 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2010-12-22 21:17:27
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:2kvtEwG1yGJHKjZ06QXC1g
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2010-12-22 22:21:58
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:unUlMC8vM6qQeaw2KeGMWg
 
 # You can replace this text with custom content, and it will be preserved on regeneration
 
 __PACKAGE__->many_to_many( roles => "users_to_roles", "role");
+
+# Have the "password" column use a SHA-1 hash and 10-character salt
+# with hex encoding; Generate the "check_password" method.
+__PACKAGE__->add_columns
+(
+    "password" =>
+    {
+        encode_column       => 1,
+        encode_class        => "Digest",
+        encode_args         => { salt_length => 10 },
+        encode_check_method => "check_password",
+    },
+);
 
 1;

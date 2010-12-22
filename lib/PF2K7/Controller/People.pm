@@ -16,14 +16,33 @@ sub login :Local :Args(0)
 {
     my ($self, $c) = @_;
 
-    my $name = $c->req->params->{name};
+    if (lc $c->req->method eq "post")
+    {
+        my $params = $c->req->params;
 
-    $c->log->debug("name is [$name]");
-
-    $c->stash
-    (
-        name => $name,
-    );
+        $c->log->debug("[$params->{username}] [$params->{password}]");
+        # If the username and password values were found in form
+        if ($params->{username} && $params->{password})
+        {
+            # Attempt to log the user in
+            $c->log->debug("logging in");
+            if ($c->authenticate({ username => $params->{username},
+                                   password => $params->{password} }))
+            {
+                # If successful, then let them use the application
+                # $c->response->redirect($c->uri_for(
+                    # $c->controller('Books')->action_for('list')));
+                $c->log->debug("logged in");
+                $c->stash(message => "Welcome.");
+                return;
+            }
+            $c->log->debug("login failed");
+            $c->stash(message => "Login failed.");
+            return;
+        }
+        # Set an error message
+        $c->stash(message => "Empty username or password.");
+    }
 }
 
 sub register :Local :Args(0)
@@ -40,6 +59,7 @@ sub register :Local :Args(0)
             email    => $params->{email},
             password => $params->{password},
         });
+        $c->go("/pf/home");
     }
 }
 

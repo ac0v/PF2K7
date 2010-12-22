@@ -364,6 +364,8 @@ sub main ()
             DBIx::Class::Schema::Loader::DBI::Pg
             DBD::SQLite
             DBIx::Class::Schema::Loader::DBI::SQLite
+            DBIx::Class::TimeStamp
+            DBIx::Class::EncodedColumn
             SQL::Translator
 
             Catalyst

@@ -61,8 +61,9 @@ __PACKAGE__->config
     {
         default =>
         {
-            class      => "SimpleDB",
-            user_model => "PF::Users"
+            class         => "SimpleDB",
+            user_model    => "PF2K7::User",
+            password_type => "self_check",
         }
     },
 
