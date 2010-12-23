@@ -2,18 +2,19 @@ BEGIN TRANSACTION;
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
-    email char(64) NOT NULL DEFAULT '',
-    name char(64) NOT NULL DEFAULT '',
-    town char(64) NOT NULL DEFAULT '',
-    country char(64) NOT NULL DEFAULT '',
-    motto1 char(256) NOT NULL DEFAULT '',
-    motto2 char(256) NOT NULL DEFAULT '',
-    username char(64) NOT NULL DEFAULT '',
-    password char(64) NOT NULL,
-    -- TODO - add lkes and dislikes
-    gps char(16) NOT NULL DEFAULT '',
-    enneagram1 int(8) NOT NULL DEFAULT 0,
-    enneagram2 int(8) NOT NULL DEFAULT 0
+    email      char(64)  NOT NULL DEFAULT '',
+    name       char(64)  NOT NULL DEFAULT '',
+    town       char(64)  NOT NULL DEFAULT '',
+    country    char(64)  NOT NULL DEFAULT '',
+    motto1     char(256) NOT NULL DEFAULT '',
+    motto2     char(256) NOT NULL DEFAULT '',
+    username   char(64)  NOT NULL DEFAULT '',
+    password   char(64)  NOT NULL,
+    likes      char(256) NOT NULL DEFAULT '',
+    dislikes   char(256) NOT NULL DEFAULT '',
+    gps        char(16)  NOT NULL DEFAULT '',
+    enneagram1 int(8)    NOT NULL DEFAULT 0,
+    enneagram2 int(8)    NOT NULL DEFAULT 0
 );
 
 -- INSERT INTO "users" VALUES(1,'friend','foDCGe8hfTtg.', 'active', NULL);

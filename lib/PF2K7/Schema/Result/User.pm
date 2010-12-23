@@ -81,6 +81,20 @@ __PACKAGE__->table("users");
   is_nullable: 0
   size: 64
 
+=head2 likes
+
+  data_type: 'char'
+  default_value: (empty string)
+  is_nullable: 0
+  size: 256
+
+=head2 dislikes
+
+  data_type: 'char'
+  default_value: (empty string)
+  is_nullable: 0
+  size: 256
+
 =head2 gps
 
   data_type: 'char'
@@ -123,6 +137,10 @@ __PACKAGE__->add_columns(
   { data_type => "char", default_value => "", is_nullable => 0, size => 64 },
   "password",
   { data_type => "char", is_nullable => 0, size => 64 },
+  "likes",
+  { data_type => "char", default_value => "", is_nullable => 0, size => 256 },
+  "dislikes",
+  { data_type => "char", default_value => "", is_nullable => 0, size => 256 },
   "gps",
   { data_type => "char", default_value => "", is_nullable => 0, size => 16 },
   "enneagram1",
@@ -150,8 +168,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07002 @ 2010-12-22 22:21:58
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:unUlMC8vM6qQeaw2KeGMWg
+# Created by DBIx::Class::Schema::Loader v0.07002 @ 2010-12-23 02:01:24
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZJKAvwPmmdDrnyPDTPYEfQ
 
 # You can replace this text with custom content, and it will be preserved on regeneration
 

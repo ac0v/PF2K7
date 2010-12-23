@@ -56,9 +56,9 @@ sub register :Local :Args(0)
         my $users_rs = $c->model("PF2K7::User");
         my $newuser  = $users_rs->create
         ({
-            username => $params->{username},
-            email    => $params->{email},
-            password => $params->{password},
+            map { $_ => $params->{$_} }
+                qw( username password name email motto1 motto2 likes dislikes
+                    gps enneagram1 enneagram2 )
         });
 
         unless ($c->authenticate({ username => $params->{username},
