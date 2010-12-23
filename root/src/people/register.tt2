@@ -1,0 +1,22 @@
+[% PROCESS "macros.tt2" %]
+
+<form method="post" action="[% c.uri_for('/register') %]">
+    <table>
+        [% row("Username",             "text",     "username"  ) %]
+        [% row("Password",             "password", "password"  ) %]
+        [% row("Name",                 "text",     "name"      ) %]
+        [% row("Email Address",        "text",     "email"     ) %]
+        [% row("Life Motto",           "text",     "motto1"    ) %]
+        [% row("Secondary Life Motto", "text",     "motto2"    ) %]
+        [% row("Likes",                "text",     "likes"     ) %]
+        [% row("Dislikes",             "text",     "dislikes"  ) %]
+        [% row("GPS Coordinates",      "text",     "gps"       ) %]
+        [% row("Primary Enneagram",    "text",     "enneagram1") %]
+        [% row("Secondary Enneagram",  "text",     "enneagram2") %]
+        <tr> <td> <input type="submit" value="Register" /> </td> </tr>
+    </table>
+</form>
+
+<p>
+
+Already a member? <a href="[% c.uri_for('/login') %]">Login</a> here.

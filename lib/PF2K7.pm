@@ -50,7 +50,7 @@ __PACKAGE__->config
             __PACKAGE__->path_to("root", "src"),
             __PACKAGE__->path_to("root", "lib")
         ],
-        TEMPLATE_EXTENSION => ".tt",
+        TEMPLATE_EXTENSION => ".tt2",
         CATALYST_VAR       => "c",
         TIMER              => 0,
         PRE_PROCESS        => "config/main",

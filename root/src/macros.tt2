@@ -1,0 +1,6 @@
+[% MACRO row(text, type, name) BLOCK %]
+    <tr>
+        <td align="left"> <b>[% text %]:</b> </td>
+        <td align="left"> <input type="[% type %]" name="[% name %]" /> </td>
+    </tr>
+[% END %]

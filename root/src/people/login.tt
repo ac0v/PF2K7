@@ -1,7 +1,0 @@
-<form method="post" action="[% c.uri_for('/login') %]">
-    Username: <input type="text" name="username" /> <br />
-    Password: <input type="password" name="password" /> <br />
-    <input type="submit" value="Login" />
-</form>
-
-Not a member? <a href="[% c.uri_for('/register') %]">Register</a> now!

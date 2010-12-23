@@ -1,0 +1,13 @@
+[% PROCESS "macros.tt2" %]
+
+<form method="post" action="[% c.uri_for('/login') %]">
+    <table>
+        [% row("Username", "text",     "username") %]
+        [% row("Password", "password", "password") %]
+        <tr> <td> <input type="submit" value="Login" /> </td> </tr>
+    </table>
+</form>
+
+<p>
+
+Not a member? <a href="[% c.uri_for('/register') %]">Register</a> now!
