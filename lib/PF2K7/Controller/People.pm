@@ -60,6 +60,15 @@ sub register :Local :Args(0)
             email    => $params->{email},
             password => $params->{password},
         });
+
+        unless ($c->authenticate({ username => $params->{username},
+                                   password => $params->{password} }))
+        {
+            $c->stash(message => "Registration failed.");
+            return;
+        }
+
+        $c->stash(message => "Registration succeeded.");
         $c->go("/pf/home");
     }
 }
