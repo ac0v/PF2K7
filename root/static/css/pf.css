@@ -75,3 +75,20 @@
         left: 120px;
         font-size: 10px;
     }
+
+form fieldset { overflow: hidden; }
+form legend { background:transparent; border:0; }
+form label { display:block; cursor:pointer; }
+form .message { display:block; margin-bottom:0.5em; color:#666; }
+
+form input[type=hidden] { display:none !important; }
+form sup { color:#800; font-weight:bold; }
+
+form div.error {
+    border:     1px #a00 dashed;
+    background: #faf4f4;
+    padding:    0.5em;
+}
+
+form div.error label { color:#000; font-weight:bold; }
+form div.error .error_message { color:#800; }
