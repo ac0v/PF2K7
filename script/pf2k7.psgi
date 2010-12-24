@@ -5,7 +5,8 @@ use warnings;
 
 use Plack::Builder;
 
-use blib;
+# eval required for plackup compatibility
+eval 'use blib;';
 
 use PF2K7;
 
