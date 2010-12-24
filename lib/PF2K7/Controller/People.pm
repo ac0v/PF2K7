@@ -3,39 +3,43 @@ package PF2K7::Controller::People;
 use Moose;
 use namespace::autoclean;
 
+use PF2K7::Form::Login;
+
 BEGIN { extends "Catalyst::Controller" }
 
-sub index :Path :Args(0)
-{
+has form_login => (
+    isa        => 'PF2K7::Form::Login',
+    is         => 'ro',
+    default    => sub { PF2K7::Form::Login->new(); },
+);
+
+sub login :Local :Args(0) {
     my ($self, $c) = @_;
 
-    $c->response->body("Matched PF2K7::Controller::People in People.");
-}
+    my $form = $self->form_login();
 
-sub login :Local :Args(0)
-{
-    my ($self, $c) = @_;
 
-    if (lc $c->req->method eq "post")
-    {
-        my $params = $c->req->params;
+    # short return if form is not validated == process returns false value
+    return if ! $form->process( params => $c->request()->body_parameters() );
 
-        if ($params->{username} && $params->{password})
-        {
-            if ($c->authenticate({ username => $params->{username},
-                                   password => $params->{password} }))
-            {
-                # $c->response->redirect($c->uri_for(
-                    # $c->controller('Books')->action_for('list')));
-                $c->stash(message => "Welcome.");
-                return;
-            }
-            $c->stash(message => "Login failed.");
-            return;
-        }
+    my $is_authenticated
+        = $c->authenticate({
+            map {
+                $_ => $form->field($_)->value();
+            } qw(username password)
+          })
+        ;
 
-        $c->stash(message => "Empty username or password.");
+    if ( $is_authenticated ) {
+	# $c->response->redirect($c->uri_for(
+	# $c->controller('Books')->action_for('list')));
+	$c->stash(message => 'Welcome.');
     }
+    else {
+	$c->stash(message => 'Login failed.');
+    }
+
+    return;
 }
 
 sub logout :Local :Args(0)
