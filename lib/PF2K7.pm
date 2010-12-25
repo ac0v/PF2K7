@@ -13,7 +13,7 @@ use Catalyst::Runtime 5.80;
 # Static::Simple: will serve static files from the application's root
 #                 directory
 
-use Catalyst qw/
+use Catalyst qw(
     ConfigLoader
     Static::Simple
 
@@ -22,58 +22,18 @@ use Catalyst qw/
     Session
     Session::State::Cookie
     Session::Store::FastMmap
-/;
-
-extends "Catalyst";
-
-our $VERSION = "0.01";
-$VERSION = eval $VERSION;
-
-# Configure the application.
-#
-# Note that settings in pf2k7.conf (or other external
-# configuration file that you set up manually) take precedence
-# over this when using ConfigLoader. Thus configuration
-# details given here can function as a default configuration,
-# with an external configuration file acting as an override for
-# local deployment.
-
-__PACKAGE__->config
-(
-    name         => "PF2K7",
-    default_view => "TT",
-
-    "View::TT" =>
-    {
-        INCLUDE_PATH =>
-        [
-            __PACKAGE__->path_to("root", "src"),
-            __PACKAGE__->path_to("root", "lib")
-        ],
-        TEMPLATE_EXTENSION => ".tt2",
-        CATALYST_VAR       => "c",
-        TIMER              => 0,
-        PRE_PROCESS        => "config/main",
-        WRAPPER            => "site/wrapper"
-    },
-
-    "Plugin::Authentication" =>
-    {
-        default =>
-        {
-            class         => "SimpleDB",
-            user_model    => "PF2K7::User",
-            password_type => "self_check",
-        }
-    },
-
-    # Disable deprecated behavior needed by old applications
-    disable_component_resolution_regex_fallback => 1,
 );
+
+extends 'Catalyst';
+
+our $VERSION = '0.1.0';
 
 # Start the application
 __PACKAGE__->setup();
 
+1;
+
+__END__
 
 =head1 NAME
 
@@ -102,4 +62,3 @@ it under the same terms as Perl itself.
 
 =cut
 
-1;

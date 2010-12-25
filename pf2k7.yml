@@ -1,3 +1,17 @@
-# rename this file to pf2k7.yml and put a ':' after 'name' if
-# you want to use YAML like in old versions of Catalyst
-name PF2K7
+name:         PF2K7
+default_view: TT
+View::TT:
+    INCLUDE_PATH:
+        - __HOME__/root/src/
+        - __HOME__/root/lib/
+    TEMPLATE_EXTENSION: .tt2
+    CATALYST_VAR:       c
+    TIMER:              0
+    PRE_PROCESS:        config/main
+    WRAPPER:            site/wrapper
+Plugin::Authentication:
+    default:
+        class:         SimpleDB
+        user_model:    PF2K7::User
+        password_type: self_check
+disable_component_resolution_regex_fallback: 1
