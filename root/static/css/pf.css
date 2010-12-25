@@ -92,3 +92,7 @@ form div.error {
 
 form div.error label { color:#000; font-weight:bold; }
 form div.error .error_message { color:#800; }
+
+form div      { float: none; }
+form div.coll { float: left; }
+form div.colr { float: none; }
