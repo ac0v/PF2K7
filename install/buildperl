@@ -398,6 +398,7 @@ sub main ()
             Gitalist
 
             Test::Pod::Coverage
+            Test::Perl::Critic
 
             Devel::Cover
           );
