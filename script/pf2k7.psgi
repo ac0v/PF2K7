@@ -17,6 +17,7 @@ my $app = sub { PF2K7->run(@_) };
 builder
 {
     enable "Debug",
-           panels => [qw( DBITrace Memory Timer Environment )];
+           panels => [qw( DBITrace Memory Timer Environment Response Parameters
+                          CatalystLog )];
     $app
 }
