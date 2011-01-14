@@ -8,7 +8,10 @@ install/System.pm
 lib/PF2K7.pm
 lib/PF2K7/Controller/People.pm
 lib/PF2K7/Controller/PF.pm
+lib/PF2K7/Controller/REST.pm
 lib/PF2K7/Controller/Root.pm
+lib/PF2K7/Form/Login.pm
+lib/PF2K7/Form/User/Data.pm
 lib/PF2K7/Model/PF2K7.pm
 lib/PF2K7/Schema.pm
 lib/PF2K7/Schema/Result/Role.pm
@@ -20,7 +23,7 @@ Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
 META.yml
-pf2k7.conf
+pf2k7.yml
 README
 root/favicon.ico
 root/lib/config/main
@@ -49,11 +52,14 @@ setup
 t/100_basic/01app.t
 t/100_basic/02pod.t
 t/100_basic/03podcoverage.t
+t/100_basic/04chars.t
+t/100_basic/05critic.t
 t/100_basic/10view_TT.t
 t/100_basic/20view_JSON.t
 t/100_basic/30model_PF2K7.t
 t/100_basic/40controller_People.t
 t/100_basic/40controller_PF.t
+t/100_basic/40controller_rest.t
 utils/create_db
 utils/make_schemas
 utils/make_sql
